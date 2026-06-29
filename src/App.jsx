@@ -7,6 +7,7 @@ import { API_LINK } from "./cfg";
 import axios from "axios";
 import { Route, Routes } from "react-router-dom";
 import Home from "./components/home";
+import Auth from "./pages/auth";
 
 export default function ChioChioTashkent() {
   const [authCheck, setAuthCheck] = useState(false);
@@ -33,16 +34,18 @@ export default function ChioChioTashkent() {
       })
       .then((res) => {
         const { ok, userInfo } = res.data;
+        
         if (ok) {
-          // Backend'dan kelayotgan userInfo ichida _id bo'lsa, uni clientId ga tenglaymiz
           setClient({
             auth: true,
-            clientId: userInfo._id || userInfo.clientId,
+            clientId: userInfo.clientId ,
             name: userInfo.name,
             phone: userInfo.phone,
           });
         } else {
           setClient({ auth: false, clientId: "", name: "", phone: "" });
+          
+          
           localStorage.removeItem("access_token");
         }
       })
@@ -54,13 +57,14 @@ export default function ChioChioTashkent() {
 
   return (
     <>
-      <Navbar client={client} setAuthCheck={setAuthCheck} setActiveTab={setTab} activeTab={activeTab}/>
+      <Navbar client={client} setAuthCheck={setAuthCheck} authCheck={authCheck} setActiveTab={setTab} activeTab={activeTab}/>
       <Routes>
         <Route path="/" element={<Home activeTab={activeTab}/>} />
         <Route
           path="/booking"
           element={<Booking client={client} setAuthCheck={setAuthCheck} />}
         />
+        <Route path="/auth" element={<Auth refresh={authCheck} setRefresh={setAuthCheck}/>} />
       </Routes>
       <Footer />
     </>

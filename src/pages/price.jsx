@@ -1,3 +1,7 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { API_LINK } from "../cfg";
+
 function Price() {
   const priceList = {
     kesim: [
@@ -44,55 +48,32 @@ function Price() {
       },
     ],
   };
+
+  const [service, setService] = useState([])
+  useEffect(()=>{
+    axios.get(`${API_LINK}/chiodata/service/getAll`).then((d)=>{
+      const {ok,msg,data} = d.data
+      if (ok) {
+        setService(data)
+        
+      } else {
+        console.log(msg);
+        
+      }
+    })
+  },[])
   return (
     <section className="max-w-md mx-auto px-4 py-6">
       <div className="bg-white border-3 border-[#e5004f] rounded-xl shadow-lg p-6 border-t-8">
         <h3 className="text-center font-black text-base md:text-lg text-[#112233] border-b-2 border-[#e5004f] pb-2 mb-4 uppercase">
-          ПРАЙС-ЛИСТ / TA'RIFLAR
+          Xizmatlar / TA'RIFLAR
         </h3>
 
         <div className="space-y-4">
           <div>
-            <span className="text-xs font-black text-[#e5004f] uppercase block mb-1">
-              Soch kesimi
-            </span>
-            {priceList.kesim.map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-between text-xs py-1 border-b border-dashed border-gray-200"
-              >
-                <span className="font-medium text-gray-700">{item.name}</span>
-                <span className="font-bold text-[#e5004f] whitespace-nowrap">
-                  {item.price}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <div>
-            <span className="text-xs font-black text-[#e5004f] uppercase block mb-1">
-              Bosh yuvish va parvarish
-            </span>
-            {priceList.yuvish.map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-between text-xs py-1 border-b border-dashed border-gray-200"
-              >
-                <span className="font-medium text-gray-700">{item.name}</span>
-                <span className="font-bold text-[#e5004f] whitespace-nowrap">
-                  {item.price}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          <div>
-            <span className="text-xs font-black text-[#e5004f] uppercase block mb-1">
-              Kombo xizmatlar
-            </span>
-            {priceList.kombo.map((item) => (
-              <div key={item.id} className="flex justify-between text-xs py-1">
-                <span className="font-medium text-gray-700">{item.name}</span>
+            {service.map((item, key) => (
+              <div key={key} className="flex justify-between text-xs py-1">
+                <span className="font-medium text-gray-700">{item.title}</span>
                 <span className="font-bold text-[#e5004f] whitespace-nowrap">
                   {item.price}
                 </span>

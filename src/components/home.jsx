@@ -1,6 +1,6 @@
 import MenHaircuts from "../pages/men";
 import ChioServicesSlider from "../pages/barbers";
-import Features from "../pages/features";
+import Features from "../pages/gallary";
 import Imges from "../pages/imges";
 import Price from "../pages/price";
 
@@ -10,8 +10,9 @@ function Home() {
             {/* <Mainbody activeTab={activeTab}/> */}
             <MenHaircuts/>
             <Features/>
-            <Price />
             <ChioServicesSlider/>
+            <Price />
+            
             <Imges />
         </>
      );
