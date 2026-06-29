@@ -1,120 +1,127 @@
 import { useState } from 'react';
-// Lucide ikonkalari (Telegram, Instagram va Location uchun)
-import {  MapPin, Menu, X, Inbox } from 'lucide-react';
+import { MapPin, Menu, X, Send, Phone } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-function Navbar({setActiveTab, activeTab}) {
-  // Tanlangan kategoriyani saqlash uchun state (qiymat qaytarish uchun)
-  
-  // Mobil versiyada dropdown menuni ochish/yopish uchun state
+function Navbar({ activeTab, setActiveTab }) {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
-  // Kategoriyalar ro'yxati
+  // App.js dagi marshrutlar va sahifalarga mos keluvchi kategoriyalar
   const categories = [
-    { id: 'home', name: 'Bosh sahifa' },
-    { id: 'women', name: 'Ayollar soch kesimi' },
-    { id: 'men', name: 'Erkaklar soch kesimi' }
+    { id: '/', name: 'Bosh sahifa' },
+    { id: '/booking', name: 'Bron qilish' },
   ];
 
-  // Kategoriya bosilganda ishlaydigan funksiya
-  const handleTabClick = (categoryName) => {
-    setActiveTab(categoryName);
-    setIsOpen(false); // Mobil menuda biror narsa bosilsa, dropdown yopiladi
-    console.log("Tanlangan kategoriya:", categoryName); // Qiymatni konsolga chiqarish yoki API'ga uzatish mumkin
+  const handleTabClick = (cat) => {
+    setActiveTab(cat.name);
+    setIsOpen(false);
+    navigate(cat.id); // Sahifaga yo'naltirish
   };
 
   return (
-    <nav className="bg-[#edece7] border-b border-[#dcdbd6] px-4 py-4 md:px-8 relative z-50">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+    <nav className="w-full bg-[#edece7] px-4 pt-4 pb-2 md:px-8 relative z-50">
+      <div className="max-w-6xl mx-auto">
         
-        {/* Logo qismi */}
-        <div className="flex items-center justify-between w-full md:w-auto">
+        {/* --- YUQORI QATOR: LOGO, REYTING VA ONLINE BRON --- */}
+        <div className="flex items-center justify-between border-b border-gray-300/40 pb-4">
+          
+          {/* Logo va Brend Matni */}
           <div className="flex items-center space-x-3">
-            <div>
-              <div className="flex items-center justify-start">
-                <img src="/logoBlack.png" alt="logo" className="h-12 md:h-16 object-contain" />
-              </div>
-              <p className="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-wider mt-1">
-                Yapon Sartaroshxonasi • Toshkent
-              </p>
+            <img 
+              src="/logoBlack.png" 
+              alt="Chio Chio" 
+              className="h-10 md:h-14 object-contain cursor-pointer" 
+              onClick={() => navigate('/')}
+            />
+            <div className="hidden sm:block border-l border-gray-400 pl-3 text-[11px] text-gray-500 font-medium leading-tight">
+              <p>Yaponcha Sifatli</p>
+              <p>Toshkent filiali</p>
             </div>
           </div>
 
-          {/* Mobil qurilmalar uchun Burger Menu (Dropdown boshqaruvchisi) */}
-          <button 
-            onClick={() => setIsOpen(!isOpen)} 
-            className="md:hidden p-2 text-gray-700 hover:text-[#e5004f] transition"
-          >
-            {isOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
-        </div>
+          {/* Aloqa va Qizil Bron Tugmasi */}
+          <div className="flex items-center space-x-3">
+            {/* Telefon raqam faqat katta ekranda chiroyli chiqadi */}
+            <a href="tel:+998901234567" className="hidden lg:flex items-center gap-1 text-sm font-bold text-[#1a2e40] hover:text-[#e5004f] transition">
+              <Phone size={14} /> +998 (90) 123-45-67
+            </a>
 
-        {/* Aloqa va Ijtimoiy tarmoqlar */}
-        <div className="flex items-center justify-between md:justify-end space-x-4 w-full md:w-auto">
-          {/* Ijtimoiy tarmoqlar (Ikonkalar qo'shildi) */}
-          <div className="flex space-x-2">
-            {/* Telegram - Eski Logotip o'rniga Custom SVG orqali chiroyli chiqadi */}
-            <a href="https://t.me/your_telegram" target="_blank" rel="noreferrer" className="w-8 h-8 bg-[#e5004f] text-white rounded-full opacity-85 flex items-center justify-center hover:opacity-100 transition shadow-sm">
-              <svg size={16} className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .24z"/>
-              </svg>
-            </a>
-            {/* Instagram */}
-            <a href="https://instagram.com/your_instagram" target="_blank" rel="noreferrer" className="w-8 h-8 bg-[#e5004f] text-white rounded-full opacity-85 flex items-center justify-center hover:opacity-100 transition shadow-sm">
-              <Inbox size={16} />
-            </a>
-            {/* Location */}
-            <a href="https://maps.google.com" target="_blank" rel="noreferrer" className="w-8 h-8 bg-[#e5004f] text-white rounded-full opacity-85 flex items-center justify-center hover:opacity-100 transition shadow-sm">
-              <MapPin size={16} />
-            </a>
+            {/* Brend Qizil Rangidagi Online Bron Tugmasi (image_a86d61.png dagi kabi) */}
+            <button 
+              onClick={() => { setActiveTab('Bron qilish'); navigate('/booking'); }}
+              className="bg-[#e5004f] text-white font-extrabold text-xs md:text-sm px-5 py-2.5 rounded-lg hover:bg-[#c40043] transition-all transform hover:scale-[1.02] shadow-md shadow-[#e5004f]/20 uppercase tracking-wider"
+            >
+              Online Navbat
+            </button>
+
+            {/* Mobil qurilmalar uchun Burger Menu */}
+            <button 
+              onClick={() => setIsOpen(!isOpen)} 
+              className="md:hidden p-2 text-[#1a2e40] hover:text-[#e5004f] transition"
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
-          
-          {/* Telefon raqam */}
-          <a href="tel:+998901234567" className="bg-[#e5004f] text-white font-bold text-sm px-4 py-2 rounded-full hover:bg-opacity-90 transition shadow-sm whitespace-nowrap">
-            +998 (90) 123-45-67
-          </a>
         </div>
-      </div>
 
-      {/* --- DESKTOP NAVIGATION (Katta ekranlar uchun parallel ko'rinish) --- */}
-      <div className="hidden md:block max-w-6xl mx-auto mt-4 bg-white rounded-md border border-[#e0dfda] overflow-x-auto shadow-sm">
-        <nav className="flex whitespace-nowrap min-w-max text-center text-xs md:text-sm font-bold">
-          {categories.map((cat, index) => {
-            const isActive = activeTab === cat.name;
-            return (
-              <span
-                key={cat.id}
-                onClick={() => handleTabClick(cat.name)}
-                className={`flex-1 px-4 py-2.5 cursor-pointer transition-colors duration-200
-                  ${isActive ? 'text-[#e5004f] border-b-2 border-[#e5004f]' : 'text-gray-600 hover:text-[#e5004f]'} 
-                  ${index !== categories.length - 1 ? 'border-r border-[#edf0f2]' : ''}`}
-              >
-                {cat.name}
-              </span>
-            );
-          })}
-        </nav>
-      </div>
-
-      {/* --- MOBILE DROPDOWN MENU (Kichik ekranlar uchun) --- */}
-      {isOpen && (
-        <div className="absolute left-0 right-0 top-full mt-1 mx-4 bg-white rounded-md border border-[#e0dfda] shadow-lg md:hidden animate-in fade-in slide-in-from-top-2 duration-200">
-          <nav className="flex flex-col text-sm font-bold divide-y divide-[#edf0f2]">
+        {/* --- DESKTOP NAVIGATSIYA: KULRANG BLOK PLASHKA (Aynan rasmdegidek) --- */}
+        <div className="hidden md:block mt-4 bg-[#e5e3db]/60 rounded-xl p-1 shadow-inner">
+          <div className="flex justify-between items-center text-center text-xs md:text-[13px] font-bold text-[#1a2e40]">
             {categories.map((cat) => {
               const isActive = activeTab === cat.name;
               return (
-                <span
+                <button
                   key={cat.id}
-                  onClick={() => handleTabClick(cat.name)}
-                  className={`px-4 py-3 cursor-pointer text-left transition-colors
-                    ${isActive ? 'text-[#e5004f] bg-red-50 pl-6 border-l-4 border-[#e5004f]' : 'text-gray-600 hover:bg-gray-50'}`}
+                  onClick={() => handleTabClick(cat)}
+                  className={`flex-1 py-3 px-4 rounded-lg transition-all duration-200 uppercase tracking-wide ${
+                    isActive 
+                      ? 'bg-white text-[#e5004f] shadow-sm font-black' 
+                      : 'hover:bg-white/40 hover:text-[#e5004f]'
+                  }`}
                 >
                   {cat.name}
-                </span>
+                </button>
               );
             })}
-          </nav>
+          </div>
         </div>
-      )}
+
+        {/* --- MOBILE DROPDOWN MENU (Mobil versiya) --- */}
+        {isOpen && (
+          <div className="absolute left-0 right-0 top-full mt-2 mx-4 bg-white rounded-xl border border-gray-200 shadow-xl md:hidden overflow-hidden animate-in fade-in slide-in-from-top-3 duration-200">
+            <div className="flex flex-col text-sm font-bold divide-y divide-gray-100">
+              {categories.map((cat) => {
+                const isActive = activeTab === cat.name;
+                return (
+                  <span
+                    key={cat.id}
+                    onClick={() => handleTabClick(cat)}
+                    className={`px-5 py-3.5 cursor-pointer text-left transition-colors flex justify-between items-center ${
+                      isActive ? 'text-[#e5004f] bg-red-50/60 border-l-4 border-[#e5004f]' : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    {cat.name}
+                  </span>
+                );
+              })}
+              
+              {/* Mobil menyu ichidagi ijtimoiy tarmoq havolalari */}
+              <div className="p-4 bg-gray-50 flex justify-around items-center">
+                <a href="https://t.me/your_telegram" target="_blank" rel="noreferrer" className="text-gray-600 hover:text-[#e5004f] flex items-center gap-1 text-xs">
+                  <Send size={16} /> Telegram
+                </a>
+                <a href="https://instagram.com/your_instagram" target="_blank" rel="noreferrer" className="text-gray-600 hover:text-[#e5004f] flex items-center gap-1 text-xs">
+                   Instagram
+                </a>
+                <a href="tel:+998901234567" className="text-gray-600 hover:text-[#e5004f] flex items-center gap-1 text-xs">
+                  <Phone size={16} /> Aloqa
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
     </nav>
   );
 }

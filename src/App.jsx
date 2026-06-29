@@ -1,44 +1,68 @@
 import "./App.css";
 import Footer from "./components/footer";
 import Navbar from "./components/nav";
-import Mainbody from "./pages/mainBody";
-import Features from "./pages/features";
 import Booking from "./pages/booking";
-import Price from "./pages/price";
-import Imges from "./pages/imges";
-import Location from "./pages/location";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { API_LINK } from "./cfg";
+import axios from "axios";
+import { Route, Routes } from "react-router-dom";
+import Home from "./components/home";
 
 export default function ChioChioTashkent() {
-  const [activeTab, setActiveTab] = useState('Bosh sahifa');
-  // Bron tizimi uchun dinamik state'lar
+  const [authCheck, setAuthCheck] = useState(false);
+  const [activeTab, setTab] = useState("Bosh sahifa");
+  const [client, setClient] = useState({
+    auth: false,
+    clientId: "",
+    name: "",
+    phone: "",
+  });
+
+  // Avtorizatsiyani tekshirish
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      setClient({ auth: false, clientId: "", name: "", phone: "" });
+      return;
+    }
+
+    // DIQQAT: Backend yo'nalishiga qarab /chiodata qismini tekshirib oling!
+    axios
+      .get(`${API_LINK}/chiodata/client/check`, {
+        headers: { "x-client-token": token },
+      })
+      .then((res) => {
+        const { ok, userInfo } = res.data;
+        if (ok) {
+          // Backend'dan kelayotgan userInfo ichida _id bo'lsa, uni clientId ga tenglaymiz
+          setClient({
+            auth: true,
+            clientId: userInfo._id || userInfo.clientId,
+            name: userInfo.name,
+            phone: userInfo.phone,
+          });
+        } else {
+          setClient({ auth: false, clientId: "", name: "", phone: "" });
+          localStorage.removeItem("access_token");
+        }
+      })
+      .catch(() => {
+        setClient({ auth: false, clientId: "", name: "", phone: "" });
+        localStorage.removeItem("access_token");
+      });
+  }, [authCheck]);
+
   return (
-    <div className="min-h-screen bg-[#edece7] text-[#1a2e40] font-sans antialiased selection:bg-[#e5004f] selection:text-white">
-      
-      {/* 1. BRAND NAVIGATION HEADER */}
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab}/>
-
-      {/* 2. HERO MAIN BANNER */}
-      <Mainbody activeTab={activeTab}/>
-
-      {/* 3. UNIQUE FEATURES BENEFITS GRID */}
-      <Features/>
-
-      {/* 4. REALTIME ADVANCED 4-TABLES BOOKING ENGINE */}
-      <Booking/>
-
-      {/* 5. PRECISE PRICE LIST COMPONENT */}
-      <Price/>
-
-      {/* 6. PORTFOLIO MATRIX IMAGES */}
-      <Imges/>
-
-      {/* 7. REVIEWS & GEOLOCATION NAVIGATION */}
-      {/* <Location/> */}
-
-      {/* FOOTER */}
-      <Footer/>
-
-    </div>
+    <>
+      <Navbar client={client} setAuthCheck={setAuthCheck} setActiveTab={setTab} activeTab={activeTab}/>
+      <Routes>
+        <Route path="/" element={<Home activeTab={activeTab}/>} />
+        <Route
+          path="/booking"
+          element={<Booking client={client} setAuthCheck={setAuthCheck} />}
+        />
+      </Routes>
+      <Footer />
+    </>
   );
 }
